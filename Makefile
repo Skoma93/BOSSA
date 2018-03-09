@@ -4,7 +4,8 @@
 # Version
 #
 VERSION?=1.9
-WXVERSION=3.0
+WXVERSION?=3.0
+WXCONFIG?=wx-config
 
 #
 # Source files
@@ -29,23 +30,26 @@ INSTALLDIR=install
 # Determine OS
 #
 OS:=$(shell uname -s | cut -c -7)
+$(info "This OS: $(OS)")
 
 #
 # Windows rules
 #
-ifeq ($(OS),MINGW32)
+ifeq ($(OS),$(filter $(OS),MINGW32 MSYS_NT))
 # Use wxWindows development branch to work around font scaling issues on Windows
 WXVERSION=3.1
 EXE=.exe
 COMMON_SRCS+=WinSerialPort.cpp WinPortFactory.cpp
 COMMON_LDFLAGS=-Wl,--enable-auto-import -static -static-libstdc++ -static-libgcc
 COMMON_LIBS=-ltermcap -Wl,--as-needed -lsetupapi
+COMMON_CXXFLAGS=-std=c++11 -U__STRICT_ANSI__
 BOSSA_RC=BossaRes.rc
-WIXDIR="C:\Program Files (x86)\WiX Toolset v3.10\bin"
+WIXDIR?="C:\Program Files (x86)\WiX Toolset v3.10\bin"
+WXMSW?=""
 CODE_SIGN=$(INSTALLDIR)\\code_sign.p12
-TIMESTAMP=http://timestamp.comodoca.com/authenticode
-SIGNTOOL="C:\Program Files (x86)\Windows Kits\10\bin\x64\signtool.exe"
-INF2CAT="C:\Program Files (x86)\Windows Kits\10\bin\x86\Inf2Cat.exe"
+TIMESTAMP?=http://timestamp.comodoca.com/authenticode
+SIGNTOOL?="C:\Program Files (x86)\Windows Kits\10\bin\x64\signtool.exe"
+INF2CAT?="C:\Program Files (x86)\Windows Kits\10\bin\x86\Inf2Cat.exe"
 
 define bossa_msi
 $(OBJDIR)\\bossa-$(1)-$(VERSION).wixobj: $(INSTALLDIR)\\bossa.wxs
@@ -195,7 +199,7 @@ ARMOBJCOPY=$(ARM)objcopy
 #
 # COMMON_CXXFLAGS+=-Wall -Werror -MT $@ -MD -MP -MF $(@:%.o=%.d) -DVERSION=\"$(VERSION)\" -g -O2
 COMMON_CXXFLAGS+=-Wall -MT $@ -MD -MP -MF $(@:%.o=%.d) -DVERSION=\"$(VERSION)\" -g -O2 $(CXXFLAGS)
-WX_CXXFLAGS:=$(shell wx-config --cxxflags --version=$(WXVERSION)) -DWX_PRECOMP -Wno-ctor-dtor-privacy -O2 -fno-strict-aliasing
+WX_CXXFLAGS:=$(shell $(WXCONFIG) --cxxflags --version=$(WXVERSION) $(WXMSW)) -DWX_PRECOMP -Wno-ctor-dtor-privacy -O2 -fno-strict-aliasing
 BOSSA_CXXFLAGS=$(COMMON_CXXFLAGS) $(WX_CXXFLAGS)
 BOSSAC_CXXFLAGS=$(COMMON_CXXFLAGS)
 BOSSASH_CXXFLAGS=$(COMMON_CXXFLAGS)
@@ -212,7 +216,7 @@ BOSSASH_LDFLAGS=$(COMMON_LDFLAGS)
 # Libs
 #
 COMMON_LIBS+=
-WX_LIBS:=$(shell wx-config --libs --version=$(WXVERSION)) $(WX_LIBS)
+WX_LIBS:=$(shell $(WXCONFIG) --libs --version=$(WXVERSION) $(WXMSW)) $(WX_LIBS)
 BOSSA_LIBS=$(COMMON_LIBS) $(WX_LIBS)
 BOSSAC_LIBS=$(COMMON_LIBS)
 BOSSASH_LIBS=-lreadline $(COMMON_LIBS)
@@ -260,10 +264,10 @@ $(foreach src,$(BOSSA_SRCS),$(eval $(call bossa_obj,$(src))))
 #
 # Resource rules
 #
-ifeq ($(OS),MINGW32)
+ifeq ($(OS),$(filter $(OS),MINGW32 MSYS_NT))
 $(OBJDIR)/$(BOSSA_RC:%.rc=%.o): $(RESDIR)/$(BOSSA_RC)
 	@echo RC $<
-	$(Q)`wx-config --rescomp --version=$(WXVERSION)` -o $@ $<
+	$(Q)`$(WXCONFIG) --rescomp --version=$(WXVERSION) $(WXMSW)` -o $@ $<
 endif
 
 #

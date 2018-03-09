@@ -1,0 +1,67 @@
+# appveyor integration for BOSSA
+# Jacob Alexander 2018
+
+# System Base
+image:
+  - Visual Studio 2015
+
+# System Build Architecture
+platform:
+  - x64
+
+# Environment Variables
+environment:
+  global:
+    WXCONFIG: "wx-config-3.0"
+    WIXDIR: "C:/Program Files (x86)/WiX Toolset v3.10/bin"
+    SIGNTOOL: "C:/Program Files (x86)/Windows Kits/10/bin/x64/signtool.exe"
+    INF2CAT: "C:/Program Files (x86)/Windows Kits/10/bin/x86/Inf2Cat.exe"
+    CYG_MIRROR: http://cygwin.uib.no
+    CYG_CACHE: C:/cygwin/var/cache/setup
+    CYG_ARCH: x86
+    CYG_ROOT: C:/cygwin
+    Q: " "
+
+# Build type
+configuration:
+  - Release
+
+# Commands run before cloning git repo
+init:
+  - git config --global core.autocrlf input
+  - git config --global core.symlinks true
+
+# Setup Build Instance
+install:
+  # Set environment variables
+  - set VERSION=%APPVEYOR_REPO_TAG_NAME%
+
+  # Install wxwidgets
+  - 'appveyor DownloadFile http://cygwin.com/setup-%CYG_ARCH%.exe -FileName setup.exe'
+  - 'setup.exe -qnNdO -R "%CYG_ROOT%" -s "%CYG_MIRROR%" -l "%CYG_CACHE%" -P libwx_gtk2u3.0-devel -P libreadline-devel'
+
+# Build Commands
+build_script:
+  - '%CYG_ROOT%/bin/bash -lc "cd \"$OLDPWD\" && make'
+  - '%CYG_ROOT%/bin/bash -lc "cd \"$OLDPWD\" && make install'
+
+# Release Artifacts
+artifacts:
+  - path: 'install/*.msi'
+
+# Deploy release
+deploy:
+  - provider: GitHub
+    auth_token:
+      secure: wjAvOOpKfKhMEDP/wXiAbGhXsk2XN6JJ0Ou/fotzTp8TUfmDb5afAHV8rD/Mlwn8
+    artifact: /.*\.msi/
+    draft: true
+    prerelease: true
+    # Conditions for uploading release
+    on:
+      appveyor_repo_tag: true
+
+# Post Build Commands
+on_finish:
+  - Tree /F
+
