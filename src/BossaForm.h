@@ -1,8 +1,8 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 13 2017)
+// C++ code generated with wxFormBuilder (version Mar  9 2018)
 // http://www.wxformbuilder.org/
 //
-// PLEASE DO "NOT" EDIT THIS FILE!
+// PLEASE DO *NOT* EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
 #ifndef __BOSSAFORM_H__
@@ -25,14 +25,14 @@
 #include <wx/combobox.h>
 #include <wx/statbox.h>
 #include <wx/filepicker.h>
-#include <wx/checkbox.h>
-#include <wx/textctrl.h>
 #include <wx/statusbr.h>
 #include <wx/frame.h>
 #include <wx/gauge.h>
 #include <wx/dialog.h>
-#include <wx/statline.h>
 #include <wx/hyperlink.h>
+#include <wx/statline.h>
+#include <wx/textctrl.h>
+#include <wx/checkbox.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -51,16 +51,6 @@ class MainFrame : public wxFrame
 		wxComboBox* _portComboBox;
 		wxButton* _refreshButton;
 		wxFilePickerCtrl* _filePicker;
-		wxCheckBox* _eraseCheckBox;
-		wxCheckBox* _bootCheckBox;
-		wxCheckBox* _bodCheckBox;
-		wxCheckBox* _borCheckBox;
-		wxCheckBox* _lockCheckBox;
-		wxCheckBox* _securityCheckBox;
-		wxStaticText* _sizeStaticText;
-		wxTextCtrl* _sizeTextCtrl;
-		wxStaticText* _offsetStaticText;
-		wxTextCtrl* _offsetTextCtrl;
 		wxButton* _writeButton;
 		wxButton* _verifyButton;
 		wxButton* _readButton;
@@ -70,7 +60,7 @@ class MainFrame : public wxFrame
 	
 	public:
 		
-		MainFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("BOSSA"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 550,400 ), long style = wxCAPTION|wxCLOSE_BOX|wxICONIZE|wxMINIMIZE|wxMINIMIZE_BOX|wxSYSTEM_MENU|wxTAB_TRAVERSAL );
+		MainFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("BOSSA - Kiibohd"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 550,400 ), long style = wxCAPTION|wxCLOSE_BOX|wxICONIZE|wxMINIMIZE|wxMINIMIZE_BOX|wxSYSTEM_MENU|wxTAB_TRAVERSAL );
 		
 		~MainFrame();
 	
@@ -106,6 +96,7 @@ class AboutDialog : public wxDialog
 	protected:
 		wxStaticBitmap* _bossaBitmap;
 		wxStaticText* _titleStaticText;
+		wxHyperlinkCtrl* _githubHyperlink;
 		wxStaticText* _versionStaticText;
 		wxStaticText* _wxStaticText;
 		wxStaticLine* m_staticline1;

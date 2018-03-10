@@ -178,9 +178,11 @@ BossaWindow::Connected()
     _statusBar->SetStatusText(wxT("Connected"), 0);
     _statusBar->SetStatusText(wxString::Format(wxT("Device: %s"), flash->name().c_str()), 1);
     _portComboBox->SetStringSelection(wxString(port.name().c_str(), wxConvUTF8));
+    /*
     _bootCheckBox->Enable(flash->canBootFlash());
     _bodCheckBox->Enable(flash->canBod());
     _borCheckBox->Enable(flash->canBor());
+    */
     _writeButton->Enable(true);
     _verifyButton->Enable(true);
     _readButton->Enable(true);
@@ -293,6 +295,9 @@ BossaWindow::OnSerial(wxCommandEvent& event)
 bool
 BossaWindow::GetOffset(uint32_t& offset)
 {
+    offset = 0;
+
+    /*
     if (_offsetTextCtrl->GetValue().IsEmpty())
     {
         offset = 0;
@@ -307,6 +312,7 @@ BossaWindow::GetOffset(uint32_t& offset)
             return false;
         }
     }
+    */
     
     return true;
 }
@@ -354,12 +360,12 @@ BossaWindow::OnWrite(wxCommandEvent& event)
     _thread = new WriteThread(
         this,
         _filePicker->GetPath(),
-        _eraseCheckBox->GetValue(),
-        _bootCheckBox->GetValue(),
-        _bodCheckBox->GetValue(),
-        _borCheckBox->GetValue(),
-        _lockCheckBox->GetValue(),
-        _securityCheckBox->GetValue(),
+        true,  // _eraseCheckBox->GetValue(),
+        true,  // _bootCheckBox->GetValue(),
+        false, // _bodCheckBox->GetValue(),
+        false, // _borCheckBox->GetValue(),
+        false, // _lockCheckBox->GetValue(),
+        false, // _securityCheckBox->GetValue(),
         offset
     );
 
@@ -430,7 +436,10 @@ BossaWindow::OnRead(wxCommandEvent& event)
             return;
     }
 
-    if (_sizeTextCtrl->GetValue().IsEmpty())
+    size = 0;
+
+    /*
+	if (_sizeTextCtrl->GetValue().IsEmpty())
     {
         size = 0;
     }
@@ -444,6 +453,7 @@ BossaWindow::OnRead(wxCommandEvent& event)
             return;
         }
     }
+    */
 
     if (!GetOffset(offset))
         return;
