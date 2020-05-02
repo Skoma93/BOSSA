@@ -1,0 +1,69 @@
+name: Build Environment
+
+on: [push, pull_request]
+
+env:
+  PIPENV_ACTIVE: 1
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install libwxgtk3.0-dev libreadline-dev -y
+    - name: Build
+      run: |
+        make -j
+        make install
+        bin/bossac --help
+    - uses: actions/upload-artifact@v1
+      if: always()
+      with:
+        name: linux
+        path: bin
+
+  macos:
+    runs-on: macOS-latest
+    strategy:
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        brew update
+        brew install wxmac
+    - name: Build
+      run: |
+        make -j
+        make install
+        bin/bossac --help
+    - uses: actions/upload-artifact@v1
+      if: always()
+      with:
+        name: macos
+        path: bin
+
+  windows:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        choco install wxwidgets
+    - name: Build
+      run: |
+        make -j
+        make install
+        bin/bossac --help
+    - uses: actions/upload-artifact@v1
+      if: always()
+      with:
+        name: windows
+        path: bin
