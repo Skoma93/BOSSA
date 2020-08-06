@@ -209,7 +209,7 @@ Device::create()
     case 0x289b09e0 : // B
     case 0x28ab09e0 : // C
         _family = FAMILY_SAM4S;
-        flashPtr = new EefcFlash(_samba, "ATSAM4S4", 0x400000, 512, 512, 1, 16, 4, 0x20001000, 0x20010000, 0x400e0a00, false);
+        flashPtr = new EefcFlash(_samba, "ATSAM4S4", 0x400000, 512, 512, 1, 32, 4, 0x20001000, 0x20010000, 0x400e0a00, false);
         break;
     case 0x288b07e0 : // A
     case 0x289b07e0 : // B
